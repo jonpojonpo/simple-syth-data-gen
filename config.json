@@ -1,0 +1,33 @@
+{
+  "generation": {
+    "default_samples": 100,
+    "seed": 42,
+    "delay_seconds": 1.0,
+    "model": "claude-haiku-4-5-20251001"
+  },
+  "output": {
+    "default_file": "training_data.jsonl",
+    "encoding": "utf-8",
+    "incremental_save": true
+  },
+  "personas": {
+    "enabled": [
+      "Early Career",
+      "Mid Career",
+      "Pre-Retirement",
+      "Retirement",
+      "Life Transition"
+    ]
+  },
+  "scenario_weights": {
+    "goal_based": 0.3,
+    "challenge_based": 0.3,
+    "product_question": 0.2,
+    "complex_scenario": 0.2
+  },
+  "customization": {
+    "include_emojis": false,
+    "response_length": "detailed",
+    "tone": "warm_professional"
+  }
+}
