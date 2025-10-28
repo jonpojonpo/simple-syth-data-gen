@@ -30,6 +30,7 @@ class WealthAdvisorDataGenerator:
         self.persona_templates = self._initialize_personas()
         self.financial_products = self._initialize_products()
         self.goal_types = self._initialize_goals()
+        self.emotional_contexts = self._initialize_emotional_contexts()
         self.markets = self._initialize_markets()
         self.wealth_tiers = self._initialize_wealth_tiers()
 
@@ -193,6 +194,63 @@ class WealthAdvisorDataGenerator:
             "long_term": ["retire comfortably by age X", "achieve financial independence",
                          "leave legacy for children", "fund dream retirement lifestyle",
                          "create passive income streams"]
+        }
+
+    def _initialize_emotional_contexts(self) -> Dict[str, List[str]]:
+        """Emotional and behavioral finance scenarios"""
+        return {
+            "life_transitions": [
+                "recently divorced, splitting assets and rebuilding financial independence",
+                "just inherited $500K from parents, feeling overwhelmed and responsible for honoring their legacy",
+                "lost job after 15 years, severance package in hand, worried about next steps",
+                "received unexpected $2M windfall from company acquisition, concerned about not squandering it",
+                "spouse passed away 6 months ago, managing joint accounts alone for first time",
+                "became empty nester, rethinking priorities and life goals",
+                "just had first child, suddenly aware of financial responsibility and mortality",
+                "aging parents need care, balancing their needs with own retirement planning",
+                "mid-career burnout, considering sabbatical but worried about financial impact"
+            ],
+            "emotional_states": [
+                "paralyzed by fear of making wrong investment decision",
+                "keeping all cash due to market volatility anxiety, watching inflation erode value",
+                "experiencing FOMO seeing friends' crypto/stock gains, tempted to chase returns",
+                "deep regret about missing 2020 market bottom, afraid of missing next opportunity",
+                "overwhelmed by conflicting advice from family, media, and financial 'gurus'",
+                "guilty about wealth while family/friends struggle financially",
+                "anxious that wealth accumulated won't be enough despite solid plan",
+                "frustrated with market volatility, considering abandoning long-term strategy",
+                "ashamed about past financial mistakes, afraid to take any action now"
+            ],
+            "behavioral_biases": [
+                "80% concentrated in employer stock, emotionally attached despite risk",
+                "refusing to sell inherited property at loss, even though proceeds needed for diversification",
+                "chasing last year's top-performing funds, ignoring asset allocation principles",
+                "checking portfolio daily, making reactive decisions based on short-term noise",
+                "avoiding opening investment statements during market downturns",
+                "over-confident in stock-picking abilities after few lucky wins",
+                "analysis paralysis - researching endlessly but never taking action",
+                "mental accounting - treating inheritance money differently than earned income"
+            ],
+            "conflicting_goals": [
+                "wants to retire at 55 but also fund children's university without loans",
+                "torn between aggressive growth for retirement and conservative preservation for near-term home purchase",
+                "spouse wants risk-off strategy while they want more growth exposure",
+                "desires sustainable investing but worried about sacrificing returns",
+                "wants to help adult children financially but jeopardizing own retirement security",
+                "building business while saving for retirement - unsure where to prioritize capital",
+                "dream of early retirement conflicts with expensive lifestyle expectations",
+                "family pressure to invest in relative's business despite financial advisor concerns"
+            ],
+            "market_concerns": [
+                "terrified of 2008-style crash, considering moving everything to cash",
+                "worried current bull market is ending, should they 'sell everything'?",
+                "concerned about recession headlines, questioning long-term investment plan",
+                "anxious about geopolitical tensions affecting portfolio",
+                "inflation fears driving consideration of gold/commodities despite unfamiliar with them",
+                "rising interest rates have decimated bond portfolio, questioning 60/40 strategy",
+                "tech stocks down 40%, wondering if should 'buy the dip' or cut losses",
+                "friend lost money in SVB collapse, now questioning all banking relationships"
+            ]
         }
 
     def _initialize_markets(self) -> Dict[str, Dict]:
@@ -509,53 +567,61 @@ class WealthAdvisorDataGenerator:
             self._generate_market_specific_scenario,  # Double weight for geographic diversity
             self._generate_tier_specific_scenario,    # Wealth tier scenarios
             self._generate_tier_specific_scenario,    # Double weight for tier diversity
-            self._generate_tier_specific_scenario     # Triple weight for tier diversity
+            self._generate_tier_specific_scenario,    # Triple weight for tier diversity
+            self._generate_emotional_scenario,        # Emotional/behavioral scenarios
+            self._generate_emotional_scenario         # Double weight for emotional depth
         ]
 
         scenario_func = random.choice(scenario_types)
         return scenario_func(persona, age, income)
 
     def _generate_goal_based_instruction(self, persona: ClientPersona, age: int, income: int) -> str:
-        """Generate advisor-facing instruction focused on client goal"""
+        """Generate client-facing instruction focused on goal"""
         family = random.choice(persona.family_situations)
         goal = random.choice(persona.common_goals)
 
         templates = [
-            f"{age}-year-old {family}, ${income:,} annual income. Wants to {goal}.",
-            f"{age} years old, {family}, earning ${income:,} annually. Goal: {goal}.",
-            f"{age}-year-old {family} making ${income:,}/year. Looking to {goal}.",
+            f"I'm {age} years old, {family}, and I earn ${income:,} a year. I want to {goal}.",
+            f"I'm a {age}-year-old {family} making ${income:,} annually. My goal is to {goal}.",
+            f"As a {age}-year-old {family} earning ${income:,}/year, I'm looking to {goal}.",
+            f"I'm {age}, {family}, with ${income:,} annual income. I want to {goal}.",
+            f"At {age}, I'm a {family} earning ${income:,} per year. I'd like to {goal}.",
         ]
         return random.choice(templates)
 
     def _generate_challenge_based_instruction(self, persona: ClientPersona, age: int, income: int) -> str:
-        """Generate advisor-facing instruction focused on client challenge"""
+        """Generate client-facing instruction focused on challenge"""
         family = random.choice(persona.family_situations)
         challenge = random.choice(persona.common_challenges)
         savings = random.randint(income // 4, income * 2)
 
         templates = [
-            f"{age}-year-old {family}, ${income:,} annual income, ${savings:,} in savings. Struggling with {challenge}.",
-            f"{age} years old, {family}, ${income:,}/year. Challenge: {challenge}. ${savings:,} saved.",
-            f"{age}-year-old {family} earning ${income:,} with ${savings:,} saved. Difficulty with {challenge}.",
+            f"I'm {age}, a {family}, earning ${income:,} a year with ${savings:,} saved. I'm struggling with {challenge}.",
+            f"I'm a {age}-year-old {family} with ${income:,} annual income. I have ${savings:,} saved but I'm facing a challenge: {challenge}.",
+            f"At {age}, I'm a {family} earning ${income:,}/year with ${savings:,} in savings. I'm having difficulty with {challenge}.",
+            f"I'm {age} years old, {family}, ${income:,} income, ${savings:,} saved. I need help with {challenge}.",
+            f"As a {age}-year-old {family}, I earn ${income:,} and have ${savings:,} saved. My challenge: {challenge}.",
         ]
         return random.choice(templates)
 
     def _generate_product_question_instruction(self, persona: ClientPersona, age: int, income: int) -> str:
-        """Generate advisor-facing instruction about financial products"""
+        """Generate client-facing instruction about financial products"""
         family = random.choice(persona.family_situations)
         category = random.choice(list(self.financial_products.keys()))
         product = random.choice(self.financial_products[category])
         goal = random.choice(persona.common_goals)
 
         templates = [
-            f"{age}-year-old {family}, ${income:,} income. Confused about {product}. Needs simple explanation.",
-            f"{age} years old, {family}, earning ${income:,}. Considering {product} to {goal}. Explain benefits.",
-            f"{age}-year-old {family} making ${income:,}. Heard about {product}, wants it demystified.",
+            f"I'm {age}, a {family} earning ${income:,}. I'm confused about {product}. Can you explain it simply?",
+            f"I'm a {age}-year-old {family} with ${income:,} income. I'm considering {product} to {goal}. What are the benefits?",
+            f"At {age}, I'm a {family} making ${income:,}. I've heard about {product} but don't understand it. Can you help?",
+            f"I'm {age} years old, {family}, earning ${income:,} annually. I want to understand {product} better.",
+            f"As a {age}-year-old {family} with ${income:,} income, I'm curious about {product} for {goal}.",
         ]
         return random.choice(templates)
 
     def _generate_complex_scenario_instruction(self, persona: ClientPersona, age: int, income: int) -> str:
-        """Generate complex multi-factor advisor-facing scenarios"""
+        """Generate complex multi-factor client-facing scenarios"""
         family = random.choice(persona.family_situations)
         challenge = random.choice(persona.common_challenges)
         goal = random.choice(persona.common_goals)
@@ -565,9 +631,11 @@ class WealthAdvisorDataGenerator:
         debt = random.randint(0, income)
 
         templates = [
-            f"{age}-year-old {family}, ${income:,} annual income, ${savings:,} in savings. Recently paused retirement contributions due to {challenge}. Need to rebuild confidence and refocus on long-term goals without adding financial strain.",
-            f"{age} years old, {family}, ${income:,} income, ${savings:,} saved, ${debt:,} in debt. Wants to {goal} while dealing with {challenge}. Feeling overwhelmed.",
-            f"{age}-year-old {family} earning ${income:,}, ${savings:,} saved. Challenge: {challenge}. Goal: {goal}. Needs help prioritizing and balancing everything.",
+            f"I'm {age}, a {family} with ${income:,} annual income and ${savings:,} saved. I recently paused retirement contributions because of {challenge}. I need to rebuild my confidence and refocus on long-term goals without adding more financial strain.",
+            f"I'm a {age}-year-old {family} earning ${income:,}, with ${savings:,} saved and ${debt:,} in debt. I want to {goal} while dealing with {challenge}. I'm feeling overwhelmed.",
+            f"At {age}, I'm a {family} earning ${income:,} with ${savings:,} in savings. My challenge: {challenge}. My goal: {goal}. I need help prioritizing and balancing everything.",
+            f"I'm {age} years old, {family}, making ${income:,}/year. I have ${savings:,} saved but also ${debt:,} debt. I want to {goal} despite {challenge}.",
+            f"As a {age}-year-old {family} with ${income:,} income and ${savings:,} saved, I'm facing {challenge} while trying to {goal}. Where do I start?",
         ]
         return random.choice(templates)
 
@@ -581,47 +649,47 @@ class WealthAdvisorDataGenerator:
         # HSBC-specific scenario templates
         hsbc_scenarios = [
             # Cross-border scenarios
-            f"{age}-year-old {family} moving from Hong Kong to Singapore, ${income:,} income, ${savings:,} in assets. Need help with cross-border wealth transfer, tax implications, and setting up banking in new jurisdiction.",
-            f"{age} years old, {family}, managing wealth across UK-HKD-SGD currencies. ${income:,} annual income, ${savings:,} portfolio. Looking to optimize currency exposure and reduce FX risk.",
-            f"{age}-year-old {family}, ${income:,} income. Participating in Greater Bay Area Wealth Connect. Wants to understand investment limits, eligible products, and cross-border tax treatment.",
+            f"I'm {age}, a {family} moving from Hong Kong to Singapore. I earn ${income:,} and have ${savings:,} in assets. I need help with cross-border wealth transfer, tax implications, and setting up banking in my new location.",
+            f"I'm a {age}-year-old {family} managing wealth across UK-HKD-SGD currencies. ${income:,} annual income, ${savings:,} portfolio. How do I optimize my currency exposure and reduce FX risk?",
+            f"At {age}, I'm a {family} with ${income:,} income. I'm participating in Greater Bay Area Wealth Connect. Can you help me understand investment limits, eligible products, and cross-border tax treatment?",
 
             # Tier progression scenarios
-            f"{age} years old, {family}, currently HSBC Premier with ${savings:,} in assets. ${income:,} annual income. Close to Jade tier threshold - want strategy to reach $1.2M and access alternative investments.",
-            f"{age}-year-old {family}, Jade client with ${savings:,}, ${income:,} income. Considering transition to Private Banking. What additional services and investment opportunities become available at $5M+ level?",
+            f"I'm {age}, a {family}, currently HSBC Premier with ${savings:,} in assets and ${income:,} annual income. I'm close to Jade tier threshold - what's my strategy to reach $1.2M and access alternative investments?",
+            f"I'm a {age}-year-old {family}, Jade client with ${savings:,} and ${income:,} income. I'm considering transitioning to Private Banking. What additional services and investment opportunities become available at the $5M+ level?",
 
             # ESG and sustainable investing
-            f"{age}-year-old {family}, ${income:,} income, ${savings:,} portfolio. Want to transition entire portfolio to ESG-aligned investments. Concerned about greenwashing and measuring real impact.",
-            f"{age} years old, {family}, ${income:,} annual income. Interested in SDG-aligned emerging market bonds and climate solutions funds. Need education on sustainable investing options and performance expectations.",
-            f"{age}-year-old {family} with ${savings:,} portfolio. Want to establish donor-advised fund for systematic philanthropy while maintaining ESG investment approach. Looking for tax-efficient structure.",
+            f"I'm {age}, a {family} with ${income:,} income and a ${savings:,} portfolio. I want to transition my entire portfolio to ESG-aligned investments. I'm concerned about greenwashing - how do I measure real impact?",
+            f"I'm a {age}-year-old {family} earning ${income:,} annually. I'm interested in SDG-aligned emerging market bonds and climate solutions funds. Can you educate me on sustainable investing options and performance expectations?",
+            f"At {age}, I'm a {family} with a ${savings:,} portfolio. I want to establish a donor-advised fund for systematic philanthropy while maintaining an ESG investment approach. What's the most tax-efficient structure?",
 
             # Business owner scenarios
-            f"{age}-year-old entrepreneur, {family}, preparing to sell family business. Expecting ${savings * 2:,} liquidity event within 12 months. Need comprehensive tax planning, investment strategy, and wealth structure before exit.",
-            f"{age} years old, {family}, serial entrepreneur with ${income:,} annual income but lumpy. ${savings:,} saved. Need strategy to smooth income, separate business risk from family wealth, and plan for next venture.",
-            f"{age}-year-old family business owner, second generation, ${income:,} income. Managing succession planning with three siblings. Need governance structure and fair distribution strategy.",
+            f"I'm {age}, an entrepreneur and {family}, preparing to sell my family business. I'm expecting a ${savings * 2:,} liquidity event within 12 months. I need comprehensive tax planning, investment strategy, and wealth structure before the exit.",
+            f"I'm a {age}-year-old {family}, serial entrepreneur with ${income:,} annual income (but it's lumpy). I have ${savings:,} saved. I need a strategy to smooth my income, separate business risk from family wealth, and plan for my next venture.",
+            f"At {age}, I'm a second-generation family business owner, {family}, earning ${income:,}. I'm managing succession planning with three siblings. What governance structure and fair distribution strategy should I use?",
 
             # Equity compensation scenarios
-            f"{age}-year-old tech professional, {family}, ${income:,} base salary plus ${income // 2:,} in RSUs vesting annually. 60% of net worth concentrated in employer stock. Need diversification strategy and tax planning.",
-            f"{age} years old, startup founder post-Series B, {family}. Sitting on ${savings:,} in illiquid equity. ${income:,} salary. ISO exercise deadline approaching - need to evaluate tax implications and liquidity options.",
+            f"I'm {age}, a tech professional and {family}. I have ${income:,} base salary plus ${income // 2:,} in RSUs vesting annually. 60% of my net worth is concentrated in employer stock. I need a diversification strategy and tax planning help.",
+            f"I'm a {age}-year-old startup founder post-Series B, {family}. I'm sitting on ${savings:,} in illiquid equity with ${income:,} salary. My ISO exercise deadline is approaching - how do I evaluate tax implications and liquidity options?",
 
             # International education scenarios
-            f"{age}-year-old expat couple, {family}, ${income:,} income. Two children heading to US/UK universities in 2-4 years. Need international education funding strategy accounting for currency risk and tax optimization.",
-            f"{age} years old, {family}, ${income:,} annual income, ${savings:,} saved. Grandchildren attending international schools in three different countries. Want to establish education trusts with cross-border efficiency.",
+            f"I'm {age}, an expat couple and {family} with ${income:,} income. Our two children are heading to US/UK universities in 2-4 years. I need an international education funding strategy that accounts for currency risk and tax optimization.",
+            f"I'm a {age}-year-old {family} with ${income:,} annual income and ${savings:,} saved. My grandchildren attend international schools in three different countries. How do I establish education trusts with cross-border efficiency?",
 
             # Repatriation and relocation
-            f"{age}-year-old {family}, returning to mainland China after 15 years in Singapore. ${income:,} income, ${savings:,} in assets. Need repatriation strategy, understand investment restrictions, and optimize tax position.",
-            f"{age} years old, {family}, relocating from London to Dubai for career. ${income:,} income, ${savings:,} portfolio. Need to understand UAE wealth management landscape, tax advantages, and maintain UK property investments.",
+            f"I'm {age}, a {family} returning to mainland China after 15 years in Singapore. I earn ${income:,} and have ${savings:,} in assets. I need a repatriation strategy - help me understand investment restrictions and optimize my tax position.",
+            f"I'm a {age}-year-old {family} relocating from London to Dubai for my career. ${income:,} income, ${savings:,} portfolio. Can you help me understand the UAE wealth management landscape, tax advantages, and how to maintain my UK property investments?",
 
             # Retirement and legacy
-            f"{age}-year-old {family}, ${income:,} pension income, ${savings:,} portfolio. Properties in Hong Kong and Vancouver. Need cross-border estate plan to minimize taxes and ensure smooth transfer to children in different countries.",
-            f"{age} years old, {family}, recently retired with ${savings:,} portfolio generating ${income:,} annually. Concerned about sequence of returns risk and making portfolio last 30+ years across multiple currencies.",
+            f"I'm {age}, a {family} with ${income:,} pension income and a ${savings:,} portfolio. I have properties in Hong Kong and Vancouver. I need a cross-border estate plan to minimize taxes and ensure smooth transfer to my children in different countries.",
+            f"I'm a {age}-year-old {family}, recently retired with a ${savings:,} portfolio generating ${income:,} annually. I'm concerned about sequence of returns risk and making my portfolio last 30+ years across multiple currencies.",
 
             # Alternative investments
-            f"{age}-year-old Jade client, {family}, ${income:,} income, ${savings:,} portfolio currently 80% public equities. Want exposure to private equity and alternative investments. Need education on illiquidity, fees, and allocation strategy.",
-            f"{age} years old, UHNW client, {family}, ${income:,} annual income, ${savings:,} AUM. Interested in art financing and collectibles as part of portfolio. Want to understand lending ratios and integration with overall wealth strategy.",
+            f"I'm {age}, a Jade client and {family} with ${income:,} income. My ${savings:,} portfolio is currently 80% public equities. I want exposure to private equity and alternative investments. Can you educate me on illiquidity, fees, and allocation strategy?",
+            f"I'm a {age}-year-old UHNW client, {family}, with ${income:,} annual income and ${savings:,} AUM. I'm interested in art financing and collectibles as part of my portfolio. How do lending ratios work and how does this integrate with my overall wealth strategy?",
 
             # Multi-generational wealth
-            f"{age}-year-old {family}, managing ${savings:,} multi-generational family wealth. Three adult children with different risk tolerances and ESG preferences. Need family governance framework and customized sub-portfolios.",
-            f"{age} years old, {family}, inherited ${savings:,} from parents. ${income:,} own income. Next generation (millennials) demanding 100% sustainable investing while preserving family wealth. Need transition strategy.",
+            f"I'm {age}, a {family} managing ${savings:,} in multi-generational family wealth. I have three adult children with different risk tolerances and ESG preferences. What family governance framework and customized sub-portfolios should I consider?",
+            f"I'm a {age}-year-old {family} who inherited ${savings:,} from my parents. I earn ${income:,} from my own work. The next generation (millennials) is demanding 100% sustainable investing while preserving family wealth. What's my transition strategy?",
         ]
 
         return random.choice(hsbc_scenarios)
@@ -669,11 +737,11 @@ class WealthAdvisorDataGenerator:
         market_display = market_name.replace("_", " ")
 
         templates = [
-            f"{age}-year-old in {market_display}, {family}, {currencies} currency exposure. {income:,} annual income, {savings:,} in assets. {scenario_base}. Need help with {challenge}.",
-            f"{age} years old, based in {market_display}, {family}. Managing {currencies} portfolios, ${income:,} income. Goal: {goal}. Considering {product} but needs simple explanation.",
-            f"{age}-year-old {market_display}-based client, {family}, ${income:,} income, ${savings:,} saved. Wants to {goal} using {product}. Challenge: {challenge}.",
-            f"{age} years old in {market_display}, {family}. ${income:,} annual income, ${savings:,} portfolio across {currencies}. Struggling with {challenge}, wants to {goal}.",
-            f"{age}-year-old client in {market_display}, {family}, ${income:,} income. {scenario_base}. Interested in {product} to {goal}.",
+            f"I'm {age}, living in {market_display}, a {family} with {currencies} currency exposure. I earn ${income:,} annually and have ${savings:,} in assets. {scenario_base}. I need help with {challenge}.",
+            f"I'm a {age}-year-old {family} based in {market_display}, managing {currencies} portfolios with ${income:,} income. My goal: {goal}. I'm considering {product} but need a simple explanation.",
+            f"At {age}, I'm in {market_display}, a {family} with ${income:,} income and ${savings:,} saved. I want to {goal} using {product}. My challenge: {challenge}.",
+            f"I'm {age} in {market_display}, a {family}. I have ${income:,} annual income and a ${savings:,} portfolio across {currencies}. I'm struggling with {challenge} and want to {goal}.",
+            f"I'm a {age}-year-old in {market_display}, {family}, earning ${income:,}. {scenario_base}. I'm interested in {product} to {goal}.",
         ]
 
         return random.choice(templates)
@@ -704,24 +772,46 @@ class WealthAdvisorDataGenerator:
         if tier["complexity"] == "moderate":
             # Premier: Educational, straightforward
             templates = [
-                f"{age}-year-old {tier_display} client, {family}, ${tier_income:,} income, ${tier_assets:,} in assets. {need}. Needs help understanding {product}.",
-                f"{age} years old, {family}, {tier_display} tier (${tier_assets:,} portfolio). ${tier_income:,} annual income. Goal: {need}. Confused about {product}.",
-                f"{age}-year-old {family}, earning ${tier_income:,}, ${tier_assets:,} saved. Currently {tier_display} client. Wants to {need} using {product}. Needs simple explanation.",
+                f"I'm {age}, a {tier_display} client and {family}, earning ${tier_income:,} with ${tier_assets:,} in assets. I'm working on {need}. Can you help me understand {product}?",
+                f"I'm a {age}-year-old {family}, {tier_display} tier with a ${tier_assets:,} portfolio and ${tier_income:,} annual income. My goal: {need}. I'm confused about {product}.",
+                f"At {age}, I'm a {family} earning ${tier_income:,} with ${tier_assets:,} saved. I'm currently a {tier_display} client. I want to {need} using {product}. Can you explain it simply?",
             ]
         elif tier["complexity"] == "sophisticated":
             # Jade/Premier Elite: More complex, strategic
             templates = [
-                f"{age}-year-old {tier_display} client, {family}, ${tier_income:,} income, ${tier_assets:,} AUM. {need}. Evaluating {product} - need strategic guidance on implementation.",
-                f"{age} years old, {family}, {tier_display} tier with ${tier_assets:,} portfolio. ${tier_income:,} annual income. Working on {need}. Considering {product} - want to understand optimal structure.",
-                f"{age}-year-old {family}, ${tier_income:,} income, ${tier_assets:,} in assets. {tier_display} client. {need}. Exploring {product} - need sophisticated analysis of trade-offs.",
+                f"I'm {age}, a {tier_display} client and {family} with ${tier_income:,} income and ${tier_assets:,} AUM. I'm working on {need}. I'm evaluating {product} - I need strategic guidance on implementation.",
+                f"I'm a {age}-year-old {family}, {tier_display} tier with ${tier_assets:,} portfolio and ${tier_income:,} annual income. I'm working on {need}. I'm considering {product} - help me understand the optimal structure.",
+                f"At {age}, I'm a {family} with ${tier_income:,} income and ${tier_assets:,} in assets, {tier_display} client. I'm focused on {need}. I'm exploring {product} - I need sophisticated analysis of the trade-offs.",
             ]
         else:  # highly_complex
             # Private Banking: Highly sophisticated, assumes knowledge
             templates = [
-                f"{age}-year-old {tier_display} client, {family}, ${tier_income:,} annual income, ${tier_assets:,} AUM. {need}. Require guidance on {product} integration with existing structure. Coordinating with external tax counsel.",
-                f"{age} years old, {family}, ${tier_assets:,} AUM across {tier_display}. ${tier_income:,} income. {need}. {product} being evaluated - need analysis of tax implications and liquidity considerations.",
-                f"{age}-year-old UHNW {family}, ${tier_income:,} income, ${tier_assets:,} AUM. {tier_display} client. {need}. {product} under consideration - seeking institutional-grade analytics and multi-jurisdictional perspective.",
+                f"I'm {age}, a {tier_display} client and {family} with ${tier_income:,} annual income and ${tier_assets:,} AUM. I'm addressing {need}. I need guidance on {product} integration with my existing structure. I'm coordinating with external tax counsel.",
+                f"I'm a {age}-year-old {family} with ${tier_assets:,} AUM across {tier_display} and ${tier_income:,} income. {need}. I'm evaluating {product} - I need analysis of tax implications and liquidity considerations.",
+                f"At {age}, I'm a UHNW {family} with ${tier_income:,} income and ${tier_assets:,} AUM, {tier_display} client. {need}. {product} is under consideration - I'm seeking institutional-grade analytics and multi-jurisdictional perspective.",
             ]
+
+        return random.choice(templates)
+
+    def _generate_emotional_scenario(self, persona: ClientPersona, age: int, income: int) -> str:
+        """Generate emotionally-rich scenarios with behavioral finance elements"""
+        family = random.choice(persona.family_situations)
+        savings = random.randint(max(income // 2, 50000), income * 4)
+
+        # Select emotional context category
+        context_category = random.choice(list(self.emotional_contexts.keys()))
+        emotional_context = random.choice(self.emotional_contexts[context_category])
+
+        # Select a goal or challenge
+        goal = random.choice(persona.common_goals)
+
+        templates = [
+            f"I'm {age}, a {family} with ${income:,} income and ${savings:,} saved. {emotional_context}. I want to {goal} but I'm struggling emotionally with the next steps.",
+            f"I'm a {age}-year-old {family} earning ${income:,} annually. {emotional_context}. I need guidance on {goal} while addressing my underlying concerns.",
+            f"At {age}, I'm a {family} earning ${income:,} with ${savings:,} in assets. {emotional_context}. I'm seeking confident direction on {goal}.",
+            f"I'm {age}, a {family}. I have ${income:,} income and a ${savings:,} portfolio. {emotional_context}. How do I move forward with {goal}?",
+            f"I'm a {age}-year-old {family} with ${income:,} income and ${savings:,} saved. {emotional_context}. I want to {goal} - where should I start?",
+        ]
 
         return random.choice(templates)
 
